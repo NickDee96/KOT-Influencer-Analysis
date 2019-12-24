@@ -10,7 +10,7 @@ consumer_key = creds["consumer_key"]
 consumer_secret = creds["consumer_secret"]
 access_key = creds["access_key"]
 access_secret = creds["access_secret"]
-screen_name="CrazyNairobian"
+screen_name="migunamiguna"
 
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_key, access_secret)
@@ -19,19 +19,10 @@ api = tweepy.API(auth)
 # initialization of a list to hold all Tweets
 
 all_the_tweets = []
-len(all_the_tweets)
-type(all_the_tweets[1])
-
-import json
-with open("test.json","w") as jFile:
-    json.dump(all_the_tweets[1]._json,fp=jFile,indent=4)
-
-
 
 # We will get the tweets with multiple requests of 200 tweets each
 
 new_tweets = api.user_timeline(screen_name=screen_name, count=200)
-NickDee96/KOT-Influencer-Analysis
 all_the_tweets.extend(new_tweets)
 
 # save id of 1 less than the oldest tweet
@@ -55,12 +46,14 @@ while len(new_tweets) > 0:
 
 # transforming the tweets into a 2D array that will be used to populate the csv
 
-outtweets = [[tweet.id_str, tweet.created_at,tweet.text.encode('utf-8')] for tweet in all_the_tweets]
+outtweets = [[tweet._json["id_str"],tweet._json["created_at"],tweet._json["text"],tweet._json["geo"],tweet._json["coordinates"],tweet._json["retweet_count"],tweet._json["favorite_count"]] for tweet in all_the_tweets]
+
+
 
 # writing to the csv file
 
 with open(screen_name + '_tweets.csv', 'w', encoding='utf8') as f:
     writer = csv.writer(f)
-    writer.writerow(['id', 'created_at', 'text'])
+    writer.writerow(['id', 'created_at', 'text','geo','coordinates','retweet_count','favorite_count'])
     writer.writerows(outtweets)
 
