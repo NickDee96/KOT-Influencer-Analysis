@@ -6,10 +6,10 @@ with open("twitterCreds.json","r") as jFile:
     creds=json.load(jFile)
 
 #Twitter API credentials
-consumer_key = "CEiEjqTd982VZd9VVv2YT2BAA"
-consumer_secret = "RkPqz03jI3KjpNlZ7uCqugf7JCdbqm2BB2ZqK5It4NgUoHrRBI"
-access_key = "2268398615-r29heFTnTs5EFOmcnkvnarE8keDrWd5S913VPLV"
-access_secret = "4Oynqk6h2nKIxnS9dlFUK2lDPCLwfKN0UK2NlHKUu6Bpn"
+consumer_key = creds["consumer_key"]
+consumer_secret = creds["consumer_secret"]
+access_key = creds["access_key"]
+access_secret = creds["access_secret"]
 screen_name="CrazyNairobian"
 
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
@@ -31,9 +31,7 @@ with open("test.json","w") as jFile:
 # We will get the tweets with multiple requests of 200 tweets each
 
 new_tweets = api.user_timeline(screen_name=screen_name, count=200)
-
-# saving the most recent tweets
-
+NickDee96/KOT-Influencer-Analysis
 all_the_tweets.extend(new_tweets)
 
 # save id of 1 less than the oldest tweet
