@@ -1,6 +1,10 @@
 import tweepy #https://github.com/tweepy/tweepy
 import csv
 
+import json
+with open("twitterCreds.json","r") as jFile:
+    creds=json.load(jFile)
+
 #Twitter API credentials
 consumer_key = "CEiEjqTd982VZd9VVv2YT2BAA"
 consumer_secret = "RkPqz03jI3KjpNlZ7uCqugf7JCdbqm2BB2ZqK5It4NgUoHrRBI"
@@ -15,6 +19,14 @@ api = tweepy.API(auth)
 # initialization of a list to hold all Tweets
 
 all_the_tweets = []
+len(all_the_tweets)
+type(all_the_tweets[1])
+
+import json
+with open("test.json","w") as jFile:
+    json.dump(all_the_tweets[1]._json,fp=jFile,indent=4)
+
+
 
 # We will get the tweets with multiple requests of 200 tweets each
 
@@ -34,7 +46,6 @@ while len(new_tweets) > 0:
     # The max_id param will be used subsequently to prevent duplicates
     new_tweets = api.user_timeline(screen_name=screen_name,
     count=200, max_id=oldest_tweet)
-
     # save most recent tweets
 
     all_the_tweets.extend(new_tweets)
