@@ -146,7 +146,19 @@ app.layout = html.Div([
                 )
             ])
         ])
+    ]),
+    dbc.Row([
+        dbc.Col([
+            html.H3(
+                children="Text Generation Using Recurrent Neural Networks on Miguna Miguna's tweet data"
+            ),
+            html.Div([
+                dcc.Markdown(
+                    id="text_gen"
+                )
+            ])
+        ])
     ])
 ])
 if __name__=="__main__":
-    app.run_server(debug=True)
+    app.run_server()
