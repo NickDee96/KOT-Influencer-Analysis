@@ -100,3 +100,16 @@ blob.sentiment
 for  i in df.text:
     blob=TextBlob("I am. Are you a capitalist (in your delusions) without owning the means of pro")
     print(blob.sentiment)
+
+
+from textgenrnn import textgenrnn
+
+textgen = textgenrnn()
+textgen.generate()
+
+textgen_2 = textgenrnn('/weights/hacker_news.hdf5')
+textgen_2.generate(3, temperature=1.0)
+
+import tensorflow as tf
+tf.config.experimental.list_physical_devices(device_type=None)
+tf.config.experimental_list_devices()
