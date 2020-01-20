@@ -1,13 +1,45 @@
 from plotly import graph_objects as go
 import pandas as pd
 import nltk
+from scipy import signal
+
 nltk.download('punkt')
 
 df=pd.read_csv("migunamiguna_tweets.csv")
 df.columns
-df.created_at=[x.replace(" +0000","") for x in df.created_at]
-df.created_at=pd.to_datetime(df.created_at,format="%a %b %d %H:%M:%S %Y")
-df.text
+def getTimePlot():
+    df.created_at=[x.replace(" +0000","") for x in df.created_at]
+    df.created_at=pd.to_datetime(df.created_at,format="%a %b %d %H:%M:%S %Y")
+    tData=df.created_at.dt.strftime("%H:%M").value_counts().to_frame().reset_index()
+    tData.columns=["Time of Day","Count"]
+    tData=tData.sort_values(by=["Time of Day"]).reset_index(drop=True)
+    fig=go.Figure()
+    fig.add_trace(
+        go.Scatter(
+            x=tData["Time of Day"],
+            y=tData["Count"],
+            mode="markers",
+            name="Tweets"
+        )
+    )
+    fig.add_trace(
+        go.Scatter(
+            x=tData["Time of Day"],
+            y=signal.savgol_filter(tData["Count"],
+                53, # window size used for filtering
+                3), # order of fitted polynomial
+            mode="lines",
+            marker=dict(
+                color="red"
+            ),
+            text=["<b>Time of Day : <b> {}".format(x) for x in tData["Time of Day"]],
+            name="Smoothed Trend line"
+        )
+    )
+    return fig
+
+
+
 
 df.created_at[1]
 

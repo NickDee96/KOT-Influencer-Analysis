@@ -9,12 +9,13 @@ import plotly.graph_objects as go
 import dash_bootstrap_components as dbc
 
 from sklearn.feature_extraction.text import TfidfVectorizer
+from scipy import signal
+
 from nltk.corpus import stopwords
 import nltk
 nltk.download("stopwords")
 
 df=pd.read_csv("migunamiguna_tweets.csv")
-
 
 def getTfIdf(series):
     stpwds=set(stopwords.words('english'))
@@ -34,6 +35,38 @@ def get_top_references(series,sign):
     handledf=pd.DataFrame(data={"handle":handles}).handle.value_counts().to_frame().reset_index()
     handledf.columns=["handle","count"]
     return handledf.head(20)["handle"]
+
+def getTimePlot():
+    df.created_at=[x.replace(" +0000","") for x in df.created_at]
+    df.created_at=pd.to_datetime(df.created_at,format="%a %b %d %H:%M:%S %Y")
+    tData=df.created_at.dt.strftime("%H:%M").value_counts().to_frame().reset_index()
+    tData.columns=["Time of Day","Count"]
+    tData=tData.sort_values(by=["Time of Day"]).reset_index(drop=True)
+    fig=go.Figure()
+    fig=fig.add_trace(
+        go.Scatter(
+            x=tData["Time of Day"],
+            y=tData["Count"],
+            mode="markers",
+            name="Tweets"
+        )
+    )
+    fig=fig.add_trace(
+        go.Scatter(
+            x=tData["Time of Day"],
+            y=signal.savgol_filter(tData["Count"],
+                53, # window size used for filtering
+                3), # order of fitted polynomial
+            mode="lines",
+            marker=dict(
+                color="red"
+            ),
+            text=["<b>Time of Day : <b> {}".format(x) for x in tData["Time of Day"]],
+            name="Smoothed Trend line"
+        )
+    )
+    return fig
+
 
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
@@ -100,6 +133,19 @@ app.layout = html.Div([
                 ])
             ])
         ],width=4)
+    ]),
+    dbc.Row([
+        dbc.Col([
+            html.H3(
+                children="Tweet Frequency across the day"
+            ),
+            html.Div([
+                dcc.Graph(
+                    id="time_plot",
+                    figure=getTimePlot()
+                )
+            ])
+        ])
     ])
 ])
 if __name__=="__main__":
